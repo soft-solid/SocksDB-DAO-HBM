@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 public interface DAO<Tentity, Tkey> {
-   void save(Collection<Tentity> entity);
+   void save(Collection<Tentity> entitys);
 
    Tentity read(Tkey id);
 
@@ -13,5 +13,5 @@ public interface DAO<Tentity, Tkey> {
 
    Collection<Tentity> find(String filter);
 
-   void delete(Tentity entity);
+   void delete(Collection<Tentity> entitys);
 }

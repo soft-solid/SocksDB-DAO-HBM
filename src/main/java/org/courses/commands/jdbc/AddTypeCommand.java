@@ -5,10 +5,10 @@ import org.courses.commands.Command;
 import org.courses.commands.CommandFormatException;
 import org.courses.domain.hbm.Type;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class AddTypeCommand implements Command {
-    private String typeName;
+    private String[] typeNames;
     private DAO<Type, Integer> dao;
 
     public AddTypeCommand(DAO<Type, Integer> dao) {
@@ -18,7 +18,7 @@ public class AddTypeCommand implements Command {
     @Override
     public void parse(String[] args) {
         if (args.length > 0) {
-            typeName = args[0];
+            typeNames = args;
         }
         else {
             throw new CommandFormatException("Type name is not specified");
@@ -27,8 +27,14 @@ public class AddTypeCommand implements Command {
 
     @Override
     public void execute() {
-        Type t = new Type();
-        t.setName(typeName);
-        dao.save(Arrays.asList(t));
+        ArrayList<Type> collection = new ArrayList<Type>(typeNames.length);
+        Type t = null;
+        for (String typeName : typeNames)
+        {
+            t = new Type();
+            t.setName(typeName);
+            collection.add(t);
+        }
+        dao.save(collection);
     }
 }

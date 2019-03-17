@@ -4,13 +4,11 @@ import org.courses.DAO.DAO;
 import org.courses.commands.Command;
 import org.courses.commands.CommandFormatException;
 import org.courses.domain.hbm.Material;
-import org.courses.domain.hbm.Type;
-import org.hibernate.Session;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class AddMaterialCommand extends AbstractQueryCommand implements Command {
-    private String materialName;
+    private String[] MaterialNames;
     private DAO<Material, Integer> dao;
 
     public AddMaterialCommand(DAO<Material, Integer> dao) {
@@ -20,7 +18,7 @@ public class AddMaterialCommand extends AbstractQueryCommand implements Command 
     @Override
     public void parse(String[] args) {
         if (args.length > 0) {
-            materialName = args[0];
+            MaterialNames = args;
         }
         else {
             throw new CommandFormatException("Material name is not specified");
@@ -29,8 +27,14 @@ public class AddMaterialCommand extends AbstractQueryCommand implements Command 
 
     @Override
     public void execute() {
-        Material m = new Material();
-        m.setName(materialName);
-        dao.save(Arrays.asList(m));
+        ArrayList<Material> collection = new ArrayList<Material>(MaterialNames.length);
+        Material m = null;
+        for (String MaterialName : MaterialNames)
+        {
+            m = new Material();
+            m.setName(MaterialName);
+            collection.add(m);
+        }
+        dao.save(collection);
     }
 }

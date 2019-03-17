@@ -100,15 +100,29 @@ public class MaterialDao implements DAO<Material, Integer> {
     }
 
     @Override
-    public void delete(Material entity) {
+    public void delete(Collection<Material> entitys) {
         Session session = null;
+        Transaction transaction = null;
         try {
             session = factory.openSession();
-            session.delete(entity);
+            transaction = session.beginTransaction();
+            deleteMaterials(session,transaction,entitys);
+        }
+        catch (Exception e){
+            if (null != transaction)
+                transaction.rollback();
+            throw e;
         }
         finally {
             if (null != session)
                 session.close();
         }
+    }
+
+    private void deleteMaterials(Session session, Transaction transaction, Collection<Material> entitys) {
+        for (Material material : entitys) {
+            session.delete(material);
+        }
+        transaction.commit();
     }
 }

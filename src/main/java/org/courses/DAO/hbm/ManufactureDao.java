@@ -98,15 +98,29 @@ public class ManufactureDao implements DAO<Manufacture, Integer> {
     }
 
     @Override
-    public void delete(Manufacture entity) {
+    public void delete(Collection<Manufacture> entitys) {
         Session session = null;
+        Transaction transaction = null;
         try {
             session = factory.openSession();
-            session.delete(entity);
+            transaction = session.beginTransaction();
+            deleteManufactures(session,transaction,entitys);
+        }
+        catch (Exception e){
+            if (null != transaction)
+                transaction.rollback();
+            throw e;
         }
         finally {
             if (null != session)
                 session.close();
         }
+    }
+
+    private void deleteManufactures(Session session, Transaction transaction, Collection<Manufacture> entitys) {
+        for (Manufacture manufacture : entitys) {
+            session.delete(manufacture);
+        }
+        transaction.commit();
     }
 }

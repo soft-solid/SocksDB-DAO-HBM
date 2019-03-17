@@ -49,12 +49,15 @@ public class Program {
         commands = new HashMap<>();
         commands.put("connect", new CreateDb());
         commands.put("table", new CreateTable());
-        commands.put("addtype", new AddTypeCommand(typeDao));//+
-        commands.put("addmaterial", new AddMaterialCommand(materialDao));//+
+        commands.put("addtype", new AddTypeCommand(typeDao));
+        commands.put("addmaterial", new AddMaterialCommand(materialDao));
         commands.put("addmanufacture", new AddManufactureCommand(manufactureDao));
-        commands.put("listmaterial", new ListMaterialCommand(materialDao));//+
-        commands.put("listtype", new ListTypeCommand(typeDao));//+
+        commands.put("listmaterial", new ListMaterialCommand(materialDao));
+        commands.put("listtype", new ListTypeCommand(typeDao));
         commands.put("listmanufacture", new ListManufactureCommand(manufactureDao));
+        commands.put("deletematerial", new DeleteMaterialCommand(materialDao));
+        commands.put("deletetype", new DeleteTypeCommand(typeDao));
+        commands.put("deletemanufacture", new DeleteManufactureCommand(manufactureDao));
     }
 
     public static void main(String[] args) {
@@ -62,8 +65,6 @@ public class Program {
         greetUser();
         while (scanner.hasNext()) {
             String line = scanner.nextLine();
-            if (line.equals("exit"))
-                break;
             parseUserInput(line);
             greetUser();
         }

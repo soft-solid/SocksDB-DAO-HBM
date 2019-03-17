@@ -19,13 +19,13 @@ public class TypeDao implements DAO<Type, Integer> {
     }
 
     @Override
-    public void save(Collection<Type> entity) {
+    public void save(Collection<Type> entitys) {
         Session session = null;
         Transaction transaction = null;
         try {
             session = factory.openSession();
             transaction = session.beginTransaction();
-            saveTypes(session, transaction, entity);
+            saveTypes(session, transaction, entitys);
         }
         catch (Exception e) {
             if (null != transaction)
@@ -99,15 +99,29 @@ public class TypeDao implements DAO<Type, Integer> {
     }
 
     @Override
-    public void delete(Type entity) {
+    public void delete(Collection<Type> entitys) {
         Session session = null;
+        Transaction transaction = null;
         try {
             session = factory.openSession();
-            session.delete(entity);
+            transaction = session.beginTransaction();
+            deleteTypes(session,transaction,entitys);
+        }
+        catch (Exception e){
+            if (null != transaction)
+                transaction.rollback();
+            throw e;
         }
         finally {
             if (null != session)
                 session.close();
         }
+    }
+
+    private void deleteTypes(Session session, Transaction transaction, Collection<Type> entitys) {
+        for (Type type : entitys) {
+            session.delete(type);
+        }
+        transaction.commit();
     }
 }

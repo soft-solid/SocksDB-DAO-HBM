@@ -2,31 +2,30 @@ package org.courses.DAO.hbm;
 
 import org.apache.commons.validator.routines.IntegerValidator;
 import org.courses.DAO.DAO;
-import org.courses.domain.hbm.Material;
+import org.courses.domain.hbm.Manufacture;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collection;
 import java.util.List;
 
-public class MaterialDao implements DAO<Material, Integer> {
+public class ManufactureDao implements DAO<Manufacture, Integer> {
     private IntegerValidator Int32 = IntegerValidator.getInstance();
     private SessionFactory factory;
 
-    public MaterialDao(SessionFactory factory) {
+    public ManufactureDao(SessionFactory factory) {
         this.factory = factory;
     }
 
     @Override
-    public void save(Collection<Material> entity) {
+    public void save(Collection<Manufacture> entity) {
         Session session = null;
         Transaction transaction = null;
         try {
             session = factory.openSession();
             transaction = session.beginTransaction();
-            saveMaterials(session, transaction, entity);
+            saveManufactures(session, transaction, entity);
         }
         catch (Exception e) {
             if (null != transaction)
@@ -38,21 +37,20 @@ public class MaterialDao implements DAO<Material, Integer> {
                 session.close();
         }
     }
-
-    private void saveMaterials(Session session, Transaction transaction, Collection<Material> entity) {
-        for (Material material : entity) {
-            session.save(material);
+    private void saveManufactures(Session session, Transaction transaction, Collection<Manufacture> entity) {
+        for (Manufacture Manufacture : entity) {
+            session.save(Manufacture);
         }
         transaction.commit();
     }
 
     @Override
-    public Material read(Integer id) {
-        Material result = null;
+    public Manufacture read(Integer id) {
+        Manufacture result = null;
         Session session = null;
         try {
             session = factory.openSession();
-            result = session.find(Material.class, id);
+            result = session.find(Manufacture.class, id);
         }
         finally {
             if (null != session)
@@ -62,13 +60,13 @@ public class MaterialDao implements DAO<Material, Integer> {
     }
 
     @Override
-    public Collection<Material> readAll() {
-        Collection<Material> result = null;
+    public Collection<Manufacture> readAll() {
+        Collection<Manufacture> result = null;
         Session session = null;
         try {
             session = factory.openSession();
             result = session
-                    .createQuery("from Material")
+                    .createQuery("from Manufacture")
                     .list();
         }
         finally {
@@ -79,13 +77,13 @@ public class MaterialDao implements DAO<Material, Integer> {
     }
 
     @Override
-    public Collection<Material> find(String filter) {
+    public Collection<Manufacture> find(String filter) {
         List result = null;
         Session session = null;
         try {
             session = factory.openSession();
             result = session
-                    .createQuery("from Material " +
+                    .createQuery("from Manufacture " +
                             "where id = :id " +
                             "or name like :filter")
                     .setParameter("id", Int32.validate(filter))
@@ -100,7 +98,7 @@ public class MaterialDao implements DAO<Material, Integer> {
     }
 
     @Override
-    public void delete(Material entity) {
+    public void delete(Manufacture entity) {
         Session session = null;
         try {
             session = factory.openSession();

@@ -1,45 +1,39 @@
 package org.courses.commands.jdbc;
 
+import org.courses.DAO.DAO;
 import org.courses.commands.Command;
-import org.courses.commands.CommandFormatException;
+import org.courses.domain.hbm.Material;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Collection;
 
 public class ListMaterialCommand extends AbstractQueryCommand implements Command {
     private String filter;
+    private DAO<Material, Integer> dao;
 
+    public ListMaterialCommand(DAO<Material, Integer> dao) {
+        this.dao = dao;
+    }
     @Override
     public void parse(String[] args) {
         if (args.length > 0) {
-            dbFile = args[0];
+            filter = args[0];
         }
         else {
-            throw new CommandFormatException("DB file is not specified");
-        }
-
-        if (args.length > 1) {
-            filter = args[1];
-        }
-        else {
-            filter = "1 = 1";
+            filter = "";
         }
     }
 
     @Override
     public void execute() {
-        try {
-            ResultSet results = select("Material", "id, name", filter);
-            while (results.next()) {
-                System.out.println(String.format(
-                        "%d\t%s",
-                        results.getInt("id"),
-                        results.getString("name")));
-            }
-            results.close();
+        Collection<Material> materials = null;
+        if (null == filter || "".equals(filter)) {
+            materials = dao.readAll();
         }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
+        else {
+            materials = dao.find(filter);
+        }
+        for (Material material : materials) {
+            System.out.println(String.format("%d\t%s", material.getId(), material.getName()));
         }
     }
 }

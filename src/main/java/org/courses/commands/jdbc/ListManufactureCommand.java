@@ -1,46 +1,39 @@
 package org.courses.commands.jdbc;
 
+import org.courses.DAO.DAO;
 import org.courses.commands.Command;
-import org.courses.commands.CommandFormatException;
+import org.courses.domain.hbm.Manufacture;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Collection;
 
 public class ListManufactureCommand extends AbstractQueryCommand implements Command {
     private String filter;
+    private DAO<Manufacture, Integer> dao;
 
+    public ListManufactureCommand(DAO<Manufacture, Integer> dao) {
+        this.dao = dao;
+    }
     @Override
     public void parse(String[] args) {
         if (args.length > 0) {
-            dbFile = args[0];
+            filter = args[0];
         }
         else {
-            throw new CommandFormatException("DB file is not specified");
+            filter = "";
         }
-
-        if (args.length > 1) {
-            filter = args[1];
-        }
-        else {
-            filter = "1 = 1";
-        }
-
     }
 
     @Override
     public void execute() {
-        try {
-            ResultSet results = select("Manufacture", "id, name", filter);
-            while (results.next()) {
-                System.out.println(String.format(
-                        "%d\t%s",
-                        results.getInt("id"),
-                        results.getString("name")));
-            }
-            results.close();
+        Collection<Manufacture> Manufactures = null;
+        if (null == filter || "".equals(filter)) {
+            Manufactures = dao.readAll();
         }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
+        else {
+            Manufactures = dao.find(filter);
+        }
+        for (Manufacture Manufacture : Manufactures) {
+            System.out.println(String.format("%d\t%s", Manufacture.getId(), Manufacture.getName()));
         }
     }
 }
